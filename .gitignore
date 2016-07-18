@@ -78,7 +78,7 @@ artifacts/
 *.bmp
 *.png
 *.ply
-#*.klg
+*.klg
 
 # Chutzpah Test files
 _Chutzpah*
