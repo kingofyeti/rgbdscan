@@ -112,7 +112,7 @@ void OpenNI2Interface::initKinectDevice()
 					// Set video modes for depth and color streams if the default ones are not
 					// waht we need. You can check the video modes using above codes.
 					//m_depthStream[i].setVideoMode(depthSensorInfo->getSupportedVideoModes()[0]);
-					m_colorStream[i].setVideoMode(colorSensorInfo->getSupportedVideoModes()[9]);
+					//m_colorStream[i].setVideoMode(colorSensorInfo->getSupportedVideoModes()[9]);
 
 					// Open depth stream and color stream
 					if (m_depthStream[i].start() != openni::STATUS_OK)
@@ -164,8 +164,12 @@ void OpenNI2Interface::initKinectDevice()
 							//	openni::OpenNI::shutdown();
 							//	m_flagInitSuccessful = false;
 							//}
-						}						
-						m_colorStream[i].getCameraSettings()->setAutoExposureEnabled(true);
+						}
+
+						m_colorStream[i].getCameraSettings()->setAutoExposureEnabled(false);
+						int exposure = m_colorStream[i].getCameraSettings()->getExposure();
+						int delta = 100;
+						m_colorStream[i].getCameraSettings()->setExposure(exposure + delta);
 						m_flagInitSuccessful = true;
 					}
 				}
