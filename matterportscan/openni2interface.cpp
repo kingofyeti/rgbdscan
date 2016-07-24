@@ -351,6 +351,8 @@ void OpenNI2Interface::decompressLog(char* filename)
 							{
 								cv::resize(mScaledDepth, mScaledDepth, mScaledDepth.size() * 2);
 							}
+							cv::flip(mScaledDepth, mScaledDepth, 1);
+
 							string depthImageName(outputFolderDepth);
 							string strName;
 							for (int k = 0; k != numDigits; ++k)
@@ -377,6 +379,8 @@ void OpenNI2Interface::decompressLog(char* filename)
 							CvMat *p = cvDecodeImageM(&mat, 1);
 							cv::Mat m(p);
 							cv::cvtColor(m, m, CV_BGR2RGB);
+
+							cv::flip(m, m, 1);
 							string rgbImageName(outputFolderColor);
 							rgbImageName += strName;
 							imwrite(rgbImageName.c_str(), m);
