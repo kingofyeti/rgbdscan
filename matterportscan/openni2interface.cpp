@@ -6,6 +6,8 @@ OpenNI2Interface::OpenNI2Interface():m_flagInitSuccessful(false),
 	m_frameIndex(0)
 {
 	m_depthWidth = m_depthHeight = m_colorHeight = m_colorWidth = 0;
+	m_flagShowImage = true;
+	m_flagScaleImage = false;
 }
 
 OpenNI2Interface::~OpenNI2Interface()
@@ -112,7 +114,10 @@ void OpenNI2Interface::initKinectDevice()
 					// Set video modes for depth and color streams if the default ones are not
 					// waht we need. You can check the video modes using above codes.
 					//m_depthStream[i].setVideoMode(depthSensorInfo->getSupportedVideoModes()[0]);
-					//m_colorStream[i].setVideoMode(colorSensorInfo->getSupportedVideoModes()[9]);
+					//VideoMode videomode = colorSensorInfo->getSupportedVideoModes()[9];
+					//videomode.setPixelFormat(openni::PIXEL_FORMAT_RGB888);
+					openni::Status status = m_colorStream[i].setVideoMode(colorSensorInfo->getSupportedVideoModes()[9]);
+
 
 					// Open depth stream and color stream
 					if (m_depthStream[i].start() != openni::STATUS_OK)
@@ -132,17 +137,17 @@ void OpenNI2Interface::initKinectDevice()
 					// image registration
 					if (m_flagInitSuccessful)
 					{
-						m_device[i].setDepthColorSyncEnabled(true);
-						if( m_device[i].isImageRegistrationModeSupported(IMAGE_REGISTRATION_DEPTH_TO_COLOR ) )
-						{
-							m_device[i].setImageRegistrationMode( IMAGE_REGISTRATION_DEPTH_TO_COLOR );
-						}
+						//m_device[i].setDepthColorSyncEnabled(true);
+						//if( m_device[i].isImageRegistrationModeSupported(IMAGE_REGISTRATION_DEPTH_TO_COLOR ) )
+						//{
+						//	m_device[i].setImageRegistrationMode( IMAGE_REGISTRATION_DEPTH_TO_COLOR );
+						//}
 					}
 
 					if (m_depthStream[i].isValid() && m_colorStream[i].isValid())
 					{
-						if (i == 0) // only set depth/color width and height once
-						{
+						//if (i == 0) // only set depth/color width and height once
+						//{
 							openni::VideoMode depthVideoMode = m_depthStream[i].getVideoMode();
 							openni::VideoMode colorVideoMode = m_colorStream[i].getVideoMode();
 							m_depthWidth = depthVideoMode.getResolutionX();
@@ -164,12 +169,14 @@ void OpenNI2Interface::initKinectDevice()
 							//	openni::OpenNI::shutdown();
 							//	m_flagInitSuccessful = false;
 							//}
-						}
+						//}
 
-						m_colorStream[i].getCameraSettings()->setAutoExposureEnabled(false);
-						int exposure = m_colorStream[i].getCameraSettings()->getExposure();
-						int delta = 100;
-						m_colorStream[i].getCameraSettings()->setExposure(exposure + delta);
+						m_colorStream[i].getCameraSettings()->setAutoWhiteBalanceEnabled(true);
+						//int exposure = m_colorStream[i].getCameraSettings()->getExposure();
+						//float delta = 100;
+						//m_colorStream[i].getCameraSettings()->setExposure(delta);
+						//m_colorStream[i].getCameraSettings()->setAutoExposureEnabled(false);
+						
 						m_flagInitSuccessful = true;
 					}
 				}
@@ -193,7 +200,7 @@ void OpenNI2Interface::run()
 		fwrite(&m_colorWidth, sizeof(int32_t), 1, logFile);
 		fwrite(&m_colorHeight, sizeof(int32_t), 1, logFile);
 		string strDepthWindowName("Depth"), strColorWindowName("Color");
-		if (cst_flagShowImage)
+		if (m_flagShowImage)
 		{
 			cv::namedWindow( strDepthWindowName,  CV_WINDOW_AUTOSIZE );
 			cv::namedWindow( strColorWindowName,  CV_WINDOW_AUTOSIZE );
@@ -203,14 +210,41 @@ void OpenNI2Interface::run()
 		{
 			for (int i = 0; i != m_deviceNumber; ++i)
 			{
+				//cout << "Read frame ..." << endl;
 				m_colorStream[i].readFrame(&m_colorFrame[i]);
+				//cout << "done." << endl;
 				if(m_colorFrame[i].isValid())
 				{
-					if (cst_flagShowImage)
+					if (m_flagShowImage)
 					{
 						int width = m_colorFrame[0].getWidth();
 						int height = m_colorFrame[0].getHeight();
+						//cout << width << " " << height << endl;
 						cv::Mat mImageRGB(height, width, CV_8UC3, (void*)m_colorFrame[0].getData() );
+						//unsigned char *pt = (unsigned char *)m_colorFrame[0].getData();
+						//cv::Mat mImageRGB(height, width, CV_8UC3);
+						//for (int m = 0; m < height; ++m)
+						//{
+						//	for (int n = 0; n < width; ++n)
+						//	{
+						//		pt[ 3 * (n + width * m)] = 255;
+						//		pt[3 * (n + width * m) + 1] = 255;
+						//		pt[3 * (n + width * m) + 2] = 0;
+						//	}
+						//}
+						//mImageRGB.data = pt;
+						//for (int m = 0; m < 1; ++m)
+						//{
+						//	for (int n = 0; n < 1; ++n)
+						//	{
+						//		for (int t = 0; t < 3; ++t)
+						//		{
+						//			cout << (int)pt[m + width * n + t] << " ";
+						//		}
+						//		cout << endl;								
+						//	}
+						//}
+						//cv::imshow( strColorWindowName, mImageRGB );
 						cv::Mat cImageBGR;
 						cv::cvtColor( mImageRGB, cImageBGR, CV_RGB2BGR );
 						cv::imshow( strColorWindowName, cImageBGR );
@@ -225,7 +259,7 @@ void OpenNI2Interface::run()
 				m_depthStream[i].readFrame(&m_depthFrame[i]); 
 				if (m_depthFrame[i].isValid())
 				{
-					if (cst_flagShowImage)
+					if (m_flagShowImage)
 					{
 						int width = m_depthFrame[0].getWidth();
 						int height = m_depthFrame[0].getHeight();
@@ -241,13 +275,13 @@ void OpenNI2Interface::run()
 				unsigned char * rgbData = (unsigned char *)imageComp->encodedImage->data.ptr;
 				unsigned char * depthData = (unsigned char *)imageComp->depth_compress_buf;
 				logData((int32_t *)&m_frameIndex, (int32_t *)&depthSize, &rgbSize, depthData, rgbData); // write compressed depth and color data for each device
-				//cout << "Frame " << m_frameIndex <<", Device " << i << "..." << endl;
+				cout << "Frame " << m_frameIndex <<", Device " << i << "..." << endl;
 				//cout << "  depthSize = " << depthSize <<", colorSize = " << rgbSize << endl;
 			}
 			m_frameIndex++;
 
 			// Check keyboard
-			if (cst_flagShowImage)
+			if (m_flagShowImage)
 			{
 				if( cv::waitKey( 1 ) == 27) // esc to quit
 				{
@@ -303,7 +337,7 @@ void OpenNI2Interface::decompressLog(char* filename)
 			if (CreateDirectory(wstrDepth.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
 			{
 				string strDepthWindowName("Depth"), strColorWindowName("Color");
-				if (cst_flagShowImage)
+				if (m_flagShowImage)
 				{
 					cv::namedWindow( strDepthWindowName,  CV_WINDOW_AUTOSIZE );
 					cv::namedWindow( strColorWindowName,  CV_WINDOW_AUTOSIZE );
@@ -318,7 +352,6 @@ void OpenNI2Interface::decompressLog(char* filename)
 					fread(&m_depthHeight, sizeof(int32_t), 1, logFile);
 					fread(&m_colorWidth, sizeof(int32_t), 1, logFile);
 					fread(&m_colorHeight, sizeof(int32_t), 1, logFile);
-					bool flag = (m_depthWidth == m_colorWidth / 2) ? true : false;
 					unsigned char *rgbData = new unsigned char[m_colorWidth * m_colorHeight];
 					unsigned char *depthData = new unsigned char[m_depthWidth * m_depthHeight * 2];
 					int numDigits = getNumberOfDigits(numFrames);
@@ -339,17 +372,20 @@ void OpenNI2Interface::decompressLog(char* filename)
 							//unsigned long len = 1000000;
 							int res = uncompress(depthData, &len, depthDataBinary, (unsigned long)depthSize);
 							delete []depthDataBinary;
-							if (res != 0)
-							{
-								cout << "-------------------------------------" << endl;
-							}
+							//if (res != 0)
+							//{
+							//	cout << "-------------------------------------" << endl;
+							//}
 							depthDataBinary = NULL;
 							cv::Mat mImageDepth(m_depthHeight, m_depthWidth, CV_16UC1, (void *)depthData);
 							cv::Mat mScaledDepth;
 							mImageDepth.convertTo( mScaledDepth, CV_16UC1, cst_depthScaleFactor );
-							if (flag)
+							if (m_flagScaleImage)
 							{
-								cv::resize(mScaledDepth, mScaledDepth, mScaledDepth.size() * 2);
+								cv::Size dstSize;
+								dstSize.width = m_colorWidth;
+								dstSize.height = m_colorHeight;
+								cv::resize(mScaledDepth, mScaledDepth, dstSize);
 							}
 							cv::flip(mScaledDepth, mScaledDepth, 1);
 
@@ -365,12 +401,12 @@ void OpenNI2Interface::decompressLog(char* filename)
 							strName = to_string((long long)j) + "_" + strName + ".png";
 							depthImageName += strName;
 							cv::imwrite(depthImageName.c_str(), mScaledDepth);
-							if (j == 0)
+							if (m_flagShowImage && j == 0)
 							{
 								cv::imshow(strDepthWindowName, mScaledDepth );
 							}
 							cout << "Frame " << i <<", Device " << j << "..." << endl;
-							cout << "  depthSize = " << depthSize << endl;
+							//cout << "  depthSize = " << depthSize << endl;
 
 							// Decompress color image
 							fread(rgbData, rgbSize, 1, logFile);
@@ -384,11 +420,11 @@ void OpenNI2Interface::decompressLog(char* filename)
 							string rgbImageName(outputFolderColor);
 							rgbImageName += strName;
 							imwrite(rgbImageName.c_str(), m);
-							if (j == 0)
+							if (m_flagShowImage && j == 0)
 							{
 								cv::imshow(strColorWindowName, m );
 							}
-							if( cv::waitKey( 1 ) == 27) // esc to quit
+							if(m_flagShowImage && cv::waitKey( 1 ) == 27) // esc to quit
 							{
 								break;
 							}

@@ -28,8 +28,6 @@ using namespace openni;
 const int cst_deviceNumber = 3;
 const float cst_depthScaleFactor = 5.0; // depth value scale factor in millimeter
 const int cst_timeInterval = 10;
-const bool cst_flagShowImage = true; // If true, show images during compression and decompression processes, and quit compression with ESC;
-									 // If false, images will not show and compression process will run for only "cst_timeInterval" seconds
 
 template <class T>
 int getNumberOfDigits(T number)
@@ -55,6 +53,9 @@ public:
 	void logData(int32_t * timestamp, int32_t * depthSize, int32_t * rgbSize, unsigned char * depthData, unsigned char * rgbData);
 	void setFilename(string filename){m_filename = filename;}
 	void decompressLog(char* filename);
+	void setFlagShowImage(bool flag){
+		m_flagShowImage = flag;
+	}
 
 private:
 	openni::Device			m_device[cst_deviceNumber];
@@ -70,6 +71,8 @@ private:
 	FILE* logFile;
 	int m_frameIndex;
 	string m_filename;
+	bool m_flagShowImage; // If true, show images during compression and decompression processes, and quit compression with ESC;
+	bool m_flagScaleImage;
 };
 
 #endif
