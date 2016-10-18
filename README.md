@@ -1,5 +1,5 @@
 # rgbdscan
-This code is to scan scene and obtain RGB-D data with OpenNI-supported depth cameras (Kinect, Asus XTion, etc). Specifically, this code can
+This code is to scan scene and obtain RGB-D data with multiple OpenNI-supported depth cameras (Kinect, Asus XTion, etc). Specifically, this code can
 
 * scan environment with **one or mutiple** depth cameras and store the RGB-D data in a single compressed .klg log file (refer to [ElasticFusion] (https://github.com/mp3guy/ElasticFusion/blob/master/README.md) and the source code for more details about the format).
 
@@ -16,7 +16,7 @@ This code is compiled and tested in Visual Studio 2010 on windows 8.1 OS.
 rgbdscan -option [rgbdfilename]
 ```
 where
-* -option: *-c* for using depth camera to scan, *-d* to decompress the klg file
+* -option: *-c* to use depth camera(s) to scan, *-d* to decompress the klg file
 * rgbdfilename: filename of the .klg log file ( *saved.klg* by default)
 
 ##Note:
