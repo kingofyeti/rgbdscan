@@ -5,6 +5,8 @@ This code is to scan scene and obtain RGB-D data with OpenNI-supported depth cam
 
 * decompress the klg file into png images in [TUM format RGB-D data] (http://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats).
 
+This code is compiled and tested in Visual Studio 2010 on windows 8.1 OS.
+
 ##Dependencies:
 - OpenCV 2.4.x
 - OpenNI2
