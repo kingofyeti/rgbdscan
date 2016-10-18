@@ -17,4 +17,7 @@ rgbdscan -option [rgbdfilename]
 ```
 where
 * *-option*: *-c* for using depth camera to scan, *-d* to decompress the klg file
-* *rgbdfilename*: .klg filename 
+* *rgbdfilename*: filename of the .klg log file ( *saved.klg* by default)
+
+##Note:
+* The decompressed png files will be saved in the *saved* folder in the local directory.
