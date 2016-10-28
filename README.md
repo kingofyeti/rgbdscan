@@ -10,6 +10,7 @@ This code is compiled and tested in Visual Studio 2010 on windows 8.1 OS.
 ##Dependencies:
 - OpenCV 2.4.x
 - OpenNI2
+- Zlib (already included)
 
 ##Usage:
 ```bash
@@ -21,3 +22,4 @@ where
 
 ##Note:
 * The decompressed png files will be saved in the *saved* folder in the local directory.
+* Remember to put necessary OpenNI2 driver files into project directory when using depth camera with OpenNI2.
