@@ -8,7 +8,7 @@ This code is to scan scene and obtain RGB-D data with multiple OpenNI-supported 
 This code is compiled and tested in Visual Studio 2010 on windows 8.1 OS.
 
 ##Dependencies:
-- OpenCV 2.4.x
+- OpenCV 2.4.9 or later
 - OpenNI2
 - Zlib (already included)
 
