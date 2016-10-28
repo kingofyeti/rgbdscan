@@ -5,8 +5,6 @@
 #include <OpenNI.h>
 #include <string>
 #include <zlib.h>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/filesystem.hpp>
 #include <fstream>
 #include "imagecompression.h"
 

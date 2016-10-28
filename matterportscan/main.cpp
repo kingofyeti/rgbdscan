@@ -4,7 +4,7 @@ void printUsage(){
 	cout <<"Usage: matterportscan [-option] [filename] [flagShowImage]" << endl;
 	cout <<"-option:" << endl
 		<<"   -c: use depth devices to scan and compress RGBD data into a klg file" << endl
-		<<"   -d: decompress the klg file into png images and save them into local \"save\" folder" << endl;
+		<<"   -d: decompress the klg file into png images and save them into local folder" << endl;
 	cout <<"filename: klg filename to be compressed or decompressed. Default filename is \"saved.klg\"" << endl;
 	cout <<"flagShowImage: flag for showing images (true by default) or not. " << endl;
 }
