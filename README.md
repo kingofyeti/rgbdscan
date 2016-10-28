@@ -21,5 +21,5 @@ where
 * rgbdfilename: filename of the .klg log file ( *saved.klg* by default)
 
 ##Note:
-* The decompressed png files will be saved in the *saved* folder in the local directory.
+* The decompressed png images will be stored in a newly created folder in the local directory, with folder name the same as .klg file's.
 * Remember to put necessary OpenNI2 driver files into project directory when using depth camera with OpenNI2.
