@@ -415,7 +415,7 @@ void OpenNI2Interface::decompressLog(char* filename)
 							CvMat mat = cvMat(m_colorHeight, m_colorWidth, CV_8UC3, rgbData);
 							//IplImage *p = cvDecodeImage( &mat, 1 );
 							CvMat *p = cvDecodeImageM(&mat, 1);
-							cv::Mat m(p);
+							cv::Mat m = cvarrToMat(p);
 							cv::cvtColor(m, m, CV_BGR2RGB);
 
 							cv::flip(m, m, 1);
